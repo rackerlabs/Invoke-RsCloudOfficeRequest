@@ -66,7 +66,7 @@ function Invoke-RsCLoudOFficeRequest {
         [Parameter(ValueFromPipeline=$true)] $Body
     )
 
-    $userAgent = 'https://gist.github.com/mkropat/43c6e5bb13b547a4c4c8'
+    $userAgent = 'https://github.com/mkropat/Invoke-RsCloudOfficeRequest'
 
     $contentType = if ($Body) { 'application/x-www-form-urlencoded' }
 
