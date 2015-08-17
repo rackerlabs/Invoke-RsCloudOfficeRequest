@@ -1,13 +1,25 @@
+A PowerShell client for the [Rackspace Cloud
+Office](http://www.rackspace.com/en-us/cloud-office) API.  See [the API
+documentation](http://api-wiki.apps.rackspace.com/api-wiki/index.php/Main_Page)
+for full details on the calls you can make.
+
 ### Getting Started
+
+#### Pre-requisites
+
+- PowerShell 3.0 or newer ([download](http://www.microsoft.com/en-us/download/details.aspx?id=40855))
+
+(Already comes with Windows 8, Server 2008 and newer)
 
 #### Installation
 
 The script is self contained, so you can just [download
 it](https://raw.githubusercontent.com/mkropat/Invoke-RsCloudOfficeRequest/master/Invoke-RsCloudOfficeRequest.ps1).
+Depending on the [PowerShell execution
+policy](https://technet.microsoft.com/en-us/library/Ee176961.aspx), you
+may need to unblock the script before it will run:
 
-If you are already in PowerShell, simply download it to your working directory:
-
-    Invoke-WebRequest https://raw.githubusercontent.com/mkropat/Invoke-RsCloudOfficeRequest/master/Invoke-RsCloudOfficeRequest.ps1 -OutFile Invoke-RsCloudOfficeRequest.ps1
+    Unblock-File Invoke-RsCloudOfficeRequest.ps1 # restart your session after this
 
 #### API Keys
 
@@ -28,7 +40,7 @@ don't have to pass them every time:
 
 When you are finished interacting with the API, you may optionally delete the
 config file at `%LOCALAPPDATA\RsCloudOfficeApi.config` so that your keys aren't
-left on your computer.
+left on the computer.
 
 ### Example Usage
 
