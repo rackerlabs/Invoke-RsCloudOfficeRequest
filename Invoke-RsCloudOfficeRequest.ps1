@@ -10,8 +10,7 @@ REST client for the Rackspace Cloud Office API [1]
 [CmdletBinding()]
 param(
     [string]$Path,
-    [Microsoft.PowerShell.Commands.WebRequestMethod]$Method = `
-        [Microsoft.PowerShell.Commands.WebRequestMethod]::Get,
+    [string]$Method = 'Get',
     [string]$BaseUrl,
     [string]$UserKey,
     [string]$SecretKey,
