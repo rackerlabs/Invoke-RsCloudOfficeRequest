@@ -3,6 +3,16 @@ Office](http://www.rackspace.com/en-us/cloud-office) API.  See [the API
 documentation](http://api-wiki.apps.rackspace.com/api-wiki/index.php/Main_Page)
 for full details on the calls you can make.
 
+#### Syntax
+
+Set up config values:
+
+    Invoke-RsCloudOfficeRequest.ps1 [[-ConfgFile] <String>] -SaveConfig [[-UserKey] <String>] [[-SecretKey] <String>] [[-BaseUrl] <String>]
+
+Making a request:
+
+    $bodyData | Invoke-RsCloudOfficeRequest.ps1 [[-Method] <String>] [-Path] <String> [[-UnpaginateProperty] <String>] [<CommonParameters>]
+
 ### Getting Started
 
 #### Pre-requisites

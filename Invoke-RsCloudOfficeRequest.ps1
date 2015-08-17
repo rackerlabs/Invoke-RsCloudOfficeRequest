@@ -11,12 +11,12 @@ REST client for the Rackspace Cloud Office API [1]
 param(
     [string]$Path,
     [string]$Method = 'Get',
-    [string]$BaseUrl,
+    [string]$UnpaginateProperty,
     [string]$UserKey,
     [string]$SecretKey,
+    [string]$BaseUrl,
     [string]$ConfgFile = "$env:LOCALAPPDATA\RsCloudOfficeApi.config",
     [switch]$SaveConfig,
-    [string]$UnpaginateProperty,
 
     [Parameter(ValueFromPipeline=$true)]
     [hashtable]$Body
