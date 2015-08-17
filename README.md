@@ -7,11 +7,13 @@ for full details on the calls you can make.
 
 Set up config values:
 
-    Invoke-RsCloudOfficeRequest.ps1 [[-ConfgFile] <String>] -SaveConfig [[-UserKey] <String>] [[-SecretKey] <String>] [[-BaseUrl] <String>]
+    Invoke-RsCloudOfficeRequest.ps1 [[-ConfgFile] <String>] -SaveConfig [[-UserKey] <String>]
+        [[-SecretKey] <String>] [[-BaseUrl] <String>]
 
 Making a request:
 
-    $bodyData | Invoke-RsCloudOfficeRequest.ps1 [[-Method] <String>] [-Path] <String> [[-UnpaginateProperty] <String>] [<CommonParameters>]
+    $bodyData | Invoke-RsCloudOfficeRequest.ps1 [[-Method] <String>] [-Path] <String>
+        [[-UnpaginateProperty] <String>] [<CommonParameters>]
 
 ### Getting Started
 
