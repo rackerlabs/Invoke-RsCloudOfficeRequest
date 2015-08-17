@@ -53,7 +53,7 @@ admin you want to act on.
 
 ```powershell
 .\Invoke-RsCloudOfficeRequest.ps1 /v1/customers/me/admins -UnpaginateProperty admins |
-    Format-Table
+    Format-Table -AutoSize
 ```
 
 ##### Add An Admin
@@ -98,7 +98,7 @@ $newAdmin | .\Invoke-RsCloudOfficeRequest.ps1 -Method Post /v1/customers/me/admi
 
 ```powershell
 .\Invoke-RsCloudOfficeRequest.ps1 /v1/customers/me/domains -UnpaginateProperty domains |
-    Format-Table
+    Format-Table -AutoSize
 ```
 
 ----
@@ -112,7 +112,7 @@ replace `jane.doe` with the name of the mailbox to act on.
 
 ```powershell
 .\Invoke-RsCloudOfficeRequest.ps1 /v1/customers/me/domains/example.com/ex/mailboxes `
-    -UnpaginateProperty mailboxes | Format-Table
+    -UnpaginateProperty mailboxes | Format-Table -AutoSize
 ```
 
 ##### Add A Mailbox
@@ -158,7 +158,7 @@ replace `jane.doe` with the name of the mailbox to act on.
 
 ```powershell
 .\Invoke-RsCloudOfficeRequest.ps1 /v1/customers/me/domains/example.com/rs/mailboxes `
-    -UnpaginateProperty rsMailboxes | Format-Table
+    -UnpaginateProperty rsMailboxes | Format-Table -AutoSize
 ```
 
 ##### Add A Mailbox
@@ -176,7 +176,6 @@ $newMailbox | .\Invoke-RsCloudOfficeRequest.ps1 -Method Post `
 
 ```powershell
 .\Invoke-RsCloudOfficeRequest.ps1 /v1/customers/me/domains/example.com/rs/mailboxes/jane.doe
-```
 
 ##### Edit A Mailbox
 
