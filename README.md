@@ -176,6 +176,7 @@ $newMailbox | .\Invoke-RsCloudOfficeRequest.ps1 -Method Post `
 
 ```powershell
 .\Invoke-RsCloudOfficeRequest.ps1 /v1/customers/me/domains/example.com/rs/mailboxes/jane.doe
+```
 
 ##### Edit A Mailbox
 
