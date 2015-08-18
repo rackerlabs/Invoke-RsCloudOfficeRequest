@@ -11,6 +11,10 @@ REST client for the Rackspace Cloud Office API [1]
 param(
     [string]$Path,
     [string]$Method = 'Get',
+
+    [ValidateSet('application/json', 'application/x-www-form-urlencoded')]
+    [string]$ContentType = 'application/x-www-form-urlencoded',
+
     [string]$UnpaginateProperty,
     [string]$UserKey,
     [string]$SecretKey,
@@ -45,11 +49,11 @@ function Do-Process {
         Unpaginate-Request $UnpaginateProperty {
             param([string[]]$queryStringArgs)
             $pagePath = Join-PathWithQueryString $Path $queryStringArgs
-            Invoke-RsCLoudOFficeRequest Get $pagePath $BaseUrl $UserKey $SecretKey
+            Invoke-RsCLoudOFficeRequest Get $pagePath $BaseUrl $ContentType $UserKey $SecretKey
         }
     }
     else {
-        $Body | Invoke-RsCLoudOFficeRequest $Method $Path $BaseUrl $UserKey $SecretKey
+        $Body | Invoke-RsCLoudOFficeRequest $Method $Path $BaseUrl $ContentType $UserKey $SecretKey
     }
 }
 
@@ -60,6 +64,7 @@ function Invoke-RsCLoudOFficeRequest {
         [parameter(Mandatory=$true)] [Microsoft.PowerShell.Commands.WebRequestMethod]$Method,
         [parameter(Mandatory=$true)] [string]$Path,
         [parameter(Mandatory=$true)] [string]$BaseUrl,
+        [parameter(Mandatory=$true)] [string]$ContentType,
         [parameter(Mandatory=$true)] [string]$UserKey,
         [parameter(Mandatory=$true)] [string]$SecretKey,
         [Parameter(ValueFromPipeline=$true)] $Body
@@ -67,11 +72,14 @@ function Invoke-RsCLoudOFficeRequest {
 
     $userAgent = 'https://github.com/mkropat/Invoke-RsCloudOfficeRequest'
 
-    $contentType = if ($Body) { 'application/x-www-form-urlencoded' }
+    $encodedBody = switch ($ContentType) {
+        'application/json'                  { ConvertTo-Json $Body }
+        'application/x-www-form-urlencoded' { ConvertTo-FormUrlEncoded $Body }
+    }
 
     Invoke-RestMethod -Method $Method -Uri "${BaseUrl}${Path}" `
-        -ContentType $contentType `
-        -Body (ConvertTo-FormUrlEncoded $Body) `
+        -ContentType $ContentType `
+        -Body $encodedBody `
         -UserAgent $userAgent `
         -Headers @{
             'Accept' = 'application/json';
