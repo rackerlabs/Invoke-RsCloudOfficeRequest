@@ -49,11 +49,11 @@ function Do-Process {
         Unpaginate-Request $UnpaginateProperty {
             param([string[]]$queryStringArgs)
             $pagePath = Join-PathWithQueryString $Path $queryStringArgs
-            Invoke-RsCLoudOFficeRequest Get $pagePath $BaseUrl $ContentType $UserKey $SecretKey
+            Invoke-RsCLoudOFficeRequest Get "${BaseUrl}${pagePath}" $ContentType $UserKey $SecretKey
         }
     }
     else {
-        $Body | Invoke-RsCLoudOFficeRequest $Method $Path $BaseUrl $ContentType $UserKey $SecretKey
+        $Body | Invoke-RsCLoudOFficeRequest $Method "${BaseUrl}${Path}" $ContentType $UserKey $SecretKey
     }
 }
 
@@ -62,8 +62,7 @@ Add-Type -AssemblyName System.Security
 function Invoke-RsCLoudOFficeRequest {
     param(
         [parameter(Mandatory=$true)] [Microsoft.PowerShell.Commands.WebRequestMethod]$Method,
-        [parameter(Mandatory=$true)] [string]$Path,
-        [parameter(Mandatory=$true)] [string]$BaseUrl,
+        [parameter(Mandatory=$true)] [string]$Uri,
         [parameter(Mandatory=$true)] [string]$ContentType,
         [parameter(Mandatory=$true)] [string]$UserKey,
         [parameter(Mandatory=$true)] [string]$SecretKey,
@@ -77,7 +76,7 @@ function Invoke-RsCLoudOFficeRequest {
         'application/x-www-form-urlencoded' { ConvertTo-FormUrlEncoded $Body }
     }
 
-    Invoke-RestMethod -Method $Method -Uri "${BaseUrl}${Path}" `
+    Invoke-RestMethod -Method $Method -Uri $Uri `
         -ContentType $ContentType `
         -Body $encodedBody `
         -UserAgent $userAgent `
