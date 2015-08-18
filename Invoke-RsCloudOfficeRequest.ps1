@@ -10,6 +10,8 @@ REST client for the Rackspace Cloud Office API [1]
 [CmdletBinding()]
 param(
     [string]$Path,
+
+    [ValidateSet('Default', 'Get', 'Head', 'Post', 'Put', 'Delete', 'Trace', 'Options', 'Merge', 'Patch')]
     [string]$Method = 'Get',
 
     [ValidateSet('application/json', 'application/x-www-form-urlencoded')]
