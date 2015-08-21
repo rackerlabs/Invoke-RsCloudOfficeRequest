@@ -166,7 +166,7 @@ function Out-Config {
   <secretKey>$SecretKey</secretKey>
   <baseUrl>$BaseUrl</baseUrl>
 </config>
-"@ | Out-File $Path
+"@ | Out-File $Path -Encoding ascii
 }
 
 function Select-FirstValue {
