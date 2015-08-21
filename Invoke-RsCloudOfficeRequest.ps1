@@ -74,7 +74,7 @@ function Invoke-RsCLoudOFficeRequest {
     $userAgent = 'https://github.com/mkropat/Invoke-RsCloudOfficeRequest'
 
     $encodedBody = switch ($ContentType) {
-        'application/json'                  { ConvertTo-Json $Body }
+        'application/json'                  { ConvertTo-Json -Depth 32 $Body }
         'application/x-www-form-urlencoded' { ConvertTo-FormUrlEncoded $Body }
     }
 
