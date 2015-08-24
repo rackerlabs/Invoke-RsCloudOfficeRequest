@@ -78,14 +78,25 @@ function Invoke-RsCLoudOFficeRequest {
         'application/x-www-form-urlencoded' { ConvertTo-FormUrlEncoded $Body }
     }
 
-    Invoke-RestMethod -Method $Method -Uri $Uri `
+    Invoke-WebRequest -Method $Method -Uri $Uri `
         -ContentType $ContentType `
         -Body $encodedBody `
         -UserAgent $userAgent `
         -Headers @{
             'Accept' = 'application/json';
             'X-Api-Signature' = (Compute-ApiSignature $userAgent $UserKey $SecretKey);
-        }
+        } |
+        Convert-Response
+}
+
+filter Convert-Response {
+    Write-Verbose "$($_.StatusCode) response"
+    try {
+        ConvertFrom-Json $_.Content
+    }
+    catch {
+        $_.Content
+    }
 }
 
 function ConvertTo-FormUrlEncoded([hashtable] $data) {
