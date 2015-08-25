@@ -78,15 +78,23 @@ function Invoke-RsCLoudOFficeRequest {
         'application/x-www-form-urlencoded' { ConvertTo-FormUrlEncoded $Body }
     }
 
-    Invoke-WebRequest -Method $Method -Uri $Uri `
-        -ContentType $ContentType `
-        -Body $encodedBody `
-        -UserAgent $userAgent `
-        -Headers @{
-            'Accept' = 'application/json';
-            'X-Api-Signature' = (Compute-ApiSignature $userAgent $UserKey $SecretKey);
-        } |
-        Convert-Response
+    try {
+        Invoke-WebRequest -Method $Method -Uri $Uri `
+            -ContentType $ContentType `
+            -Body $encodedBody `
+            -UserAgent $userAgent `
+            -Headers @{
+                'Accept' = 'application/json';
+                'X-Api-Signature' = (Compute-ApiSignature $userAgent $UserKey $SecretKey);
+            } |
+            Convert-Response
+    }
+    catch [System.Net.WebException] {
+        $code = $_.Exception.Response.StatusCode -as [int]
+        $message = $_.Exception.Response.Headers['x-error-message']
+
+        Write-Error "$code $message"
+    }
 }
 
 filter Convert-Response {
