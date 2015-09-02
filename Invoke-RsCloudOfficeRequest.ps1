@@ -90,6 +90,10 @@ function Invoke-RsCLoudOFficeRequest {
             Convert-Response
     }
     catch [System.Net.WebException] {
+        if (-not $_.Exception.Response) {
+            throw $_
+        }
+
         $code = $_.Exception.Response.StatusCode -as [int]
         $message = $_.Exception.Response.Headers['x-error-message']
 
