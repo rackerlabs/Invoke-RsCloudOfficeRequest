@@ -25,6 +25,16 @@ Making a request:
 
 #### Installation
 
+##### PowerShell Gallery
+
+```powershell
+PS > Install-Module RackspaceCloudOffice
+```
+
+__Note:__ [PowerShell 5+](https://www.microsoft.com/en-us/download/details.aspx?id=50395) is required to install from the gallery
+
+##### Manual Install
+
 1. Download the [latest release `.zip`](https://github.com/rackerlabs/Invoke-RsCloudOfficeRequest/releases/latest)
 1. **Important** [Unblock the downloaded `.zip` file](https://blogs.msdn.microsoft.com/delay/p/unblockingdownloadedfile/)
 1. Extract the `.zip` file to `%USERPROFILE%\Documents\WindowsPowerShell\Modules`
