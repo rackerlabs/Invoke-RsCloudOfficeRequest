@@ -1,67 +1,107 @@
 ﻿#requires -version 3
 
-<#
-.SYNOPSIS
-REST client for the Rackspace Cloud Office API [1]
-
-[1]: http://api-wiki.apps.rackspace.com/api-wiki/index.php/Main_Page
-#>
-
-[CmdletBinding()]
-param(
-    [string]$Path,
-
-    [ValidateSet('Default', 'Get', 'Head', 'Post', 'Put', 'Delete', 'Trace', 'Options', 'Merge', 'Patch')]
-    [string]$Method = 'Get',
-
-    [ValidateSet('application/json', 'application/x-www-form-urlencoded')]
-    [string]$ContentType = 'application/x-www-form-urlencoded',
-
-    [string]$UnpaginateProperty,
-    [string]$UserKey,
-    [string]$SecretKey,
-    [string]$BaseUrl,
-    [string]$ConfgFile = "$env:LOCALAPPDATA\RsCloudOfficeApi.config",
-    [switch]$SaveConfig,
-
-    [Parameter(ValueFromPipeline=$true)]
-    [hashtable]$Body
-)
-
-begin {
-
-function Do-Begin {
-    $script:UserKey   = Select-FirstValue $UserKey   { Get-ConfigFileNode /config/userKey }
-    $script:SecretKey = Select-FirstValue $SecretKey { Get-ConfigFileNode /config/secretKey }
-    $script:BaseUrl   = Select-FirstValue $BaseUrl `
-        { Get-ConfigFileNode /config/baseUrl } `
-        'https://api.emailsrvr.com'
-
-    if ($SaveConfig) {
-        Out-Config $ConfgFile $UserKey $SecretKey $BaseUrl
-
-        if (-not $Path) {
-            exit
-        }
-    }
-}
-
-function Do-Process {
-    if ($UnpaginateProperty) {
-        Unpaginate-Request $UnpaginateProperty {
-            param([string[]]$queryStringArgs)
-            $pagePath = Join-PathWithQueryString $Path $queryStringArgs
-            Invoke-RsCLoudOFficeRequest Get "${BaseUrl}${pagePath}" $ContentType $UserKey $SecretKey
-        }
-    }
-    else {
-        $Body | Invoke-RsCLoudOFficeRequest $Method "${BaseUrl}${Path}" $ContentType $UserKey $SecretKey
-    }
-}
-
 Add-Type -AssemblyName System.Security
 
-function Invoke-RsCLoudOFficeRequest {
+function Invoke-RsCloudOfficeRequest {
+    <#
+    .SYNOPSIS
+    REST client for the Rackspace Cloud Office API [1]
+
+    [1]: http://api-wiki.apps.rackspace.com/api-wiki/index.php/Main_Page
+    #>
+
+    param(
+        [Parameter(Mandatory=$true)]
+        [string]$Path,
+
+        [ValidateSet('Default', 'Get', 'Head', 'Post', 'Put', 'Delete', 'Trace', 'Options', 'Merge', 'Patch')]
+        [string]$Method = 'Get',
+
+        [ValidateSet('application/json', 'application/x-www-form-urlencoded')]
+        [string]$ContentType = 'application/x-www-form-urlencoded',
+
+        [string]$UnpaginateProperty,
+        [string]$UserKey,
+        [string]$SecretKey,
+        [string]$BaseUrl,
+        [string]$ConfgFile = "$env:LOCALAPPDATA\RsCloudOfficeApi.config",
+
+        [Parameter(ValueFromPipeline=$true)]
+        [hashtable]$Body
+    )
+
+    begin {
+        $UserKey = Get-UserKey $ConfgFile $UserKey
+        if (-not $UserKey) {
+            throw '-UserKey is required'
+        }
+
+        $SecretKey = Get-SecretKey $ConfgFile $SecretKey
+        if (-not $SecretKey) {
+            throw '-SecretKey is required'
+        }
+
+        $BaseUrl = Get-BaseUrl $ConfgFile $BaseUrl
+    }
+
+    process {
+        if ($UnpaginateProperty) {
+            Unpaginate-Request $UnpaginateProperty {
+                param([string[]]$queryStringArgs)
+                $pagePath = Join-PathWithQueryString $Path $queryStringArgs
+                Invoke-SingleRequest Get "${BaseUrl}${pagePath}" $ContentType $UserKey $SecretKey
+            }
+        }
+        else {
+            $Body | Invoke-SingleRequest $Method "${BaseUrl}${Path}" $ContentType $UserKey $SecretKey
+        }
+    }
+}
+
+function Set-RsCloudOfficeConfig {
+    param(
+        [string]$UserKey,
+        [string]$SecretKey,
+        [string]$BaseUrl,
+        [string]$ConfgFile = "$env:LOCALAPPDATA\RsCloudOfficeApi.config"
+    )
+
+    $UserKey = Get-UserKey $ConfgFile $UserKey
+    if (-not $UserKey) {
+        throw '-UserKey is required'
+    }
+
+    $SecretKey = Get-SecretKey $ConfgFile $SecretKey
+    if (-not $SecretKey) {
+        throw '-SecretKey is required'
+    }
+
+    $BaseUrl = Get-BaseUrl $ConfgFile $BaseUrl
+
+    Out-Config $ConfgFile @{
+        userKey=$UserKey
+        secretKey=$SecretKey
+        baseUrl=$BaseUrl
+    }
+}
+
+Export-ModuleMember -Function @('Invoke-RsCloudOfficeRequest', 'Set-RsCloudOfficeConfig')
+
+function Get-UserKey($ConfigFile, $UserKey) {
+    Select-FirstValue $UserKey { Get-ConfigFileNode $ConfigFile /config/userKey }
+}
+
+function Get-SecretKey($ConfigFile, $SecretKey) {
+    Select-FirstValue $SecretKey { Get-ConfigFileNode $ConfigFile /config/secretKey }
+}
+
+function Get-BaseUrl($ConfigFile, $BaseUrl) {
+    Select-FirstValue $BaseUrl `
+        { Get-ConfigFileNode $ConfigFile /config/baseUrl } `
+        'https://api.emailsrvr.com'
+}
+
+function Invoke-SingleRequest {
     param(
         [parameter(Mandatory=$true)] [Microsoft.PowerShell.Commands.WebRequestMethod]$Method,
         [parameter(Mandatory=$true)] [string]$Uri,
@@ -168,26 +208,30 @@ function Join-PathWithQueryString {
     }
 }
 
-function Get-ConfigFileNode($nodePath) {
+function Get-ConfigFileNode($ConfigFile, $NodePath) {
     [xml]$cfg = Get-Content $ConfgFile -ErrorAction SilentlyContinue
     if ($cfg) {
-        $cfg.SelectNodes($nodePath) | select -First 1 -ExpandProperty '#text'
+        $cfg.SelectNodes($NodePath) | select -First 1 -ExpandProperty '#text' -ErrorAction SilentlyContinue
     }
 }
 
 function Out-Config {
     param(
         [parameter(Mandatory=$true)] [string]$Path,
-        [parameter(Mandatory=$true)] [string]$UserKey,
-        [parameter(Mandatory=$true)] [string]$SecretKey,
-        [parameter(Mandatory=$true)] [string]$BaseUrl
+        [parameter(Mandatory=$true)] [hashtable]$Config
     )
+
+    $nodes = $Config.Keys | foreach {
+        $val = $Config[$_]
+        $val = [Security.SecurityElement]::Escape($val)
+        "<$_>$val</$_>"
+    }
+    $nodes = $nodes -join "`n"
+
     @"
 <?xml version="1.0" encoding="utf-8"?>
 <config>
-  <userKey>$UserKey</userKey>
-  <secretKey>$SecretKey</secretKey>
-  <baseUrl>$BaseUrl</baseUrl>
+$nodes
 </config>
 "@ | Out-File $Path -Encoding ascii
 }
@@ -198,9 +242,3 @@ function Select-FirstValue {
         where { $_ } |
         select -First 1
 }
-
-Do-Begin
-
-}
-
-process { Do-Process }

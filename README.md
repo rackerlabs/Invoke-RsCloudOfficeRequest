@@ -7,12 +7,12 @@ for full details on the calls you can make.
 
 Set up config values:
 
-    Invoke-RsCloudOfficeRequest.ps1 [[-ConfgFile] <String>] -SaveConfig [[-UserKey] <String>]
+    Set-RsCloudOfficeConfig [[-ConfgFile] <String>] [[-UserKey] <String>]
         [[-SecretKey] <String>] [[-BaseUrl] <String>]
 
 Making a request:
 
-    $bodyData | Invoke-RsCloudOfficeRequest.ps1 [[-Method] <String>] [-Path] <String>
+    $bodyData | Invoke-RsCloudOfficeRequest [[-Method] <String>] [-Path] <String>
         [[-UnpaginateProperty] <String>] [<CommonParameters>]
 
 ### Getting Started
@@ -25,13 +25,14 @@ Making a request:
 
 #### Installation
 
-The script is self contained, so you can just [download
-it](https://raw.githubusercontent.com/mkropat/Invoke-RsCloudOfficeRequest/master/Invoke-RsCloudOfficeRequest.ps1).
-Depending on the [PowerShell execution
-policy](https://technet.microsoft.com/en-us/library/Ee176961.aspx), you
-may need to unblock the script before it will run:
+1. Download the [latest release `.zip`](https://github.com/rackerlabs/Invoke-RsCloudOfficeRequest/releases/latest)
+1. **Important** [Unblock the downloaded `.zip` file](https://blogs.msdn.microsoft.com/delay/p/unblockingdownloadedfile/)
+1. Extract the `.zip` file to `%USERPROFILE%\Documents\WindowsPowerShell\Modules`
 
-    Unblock-File Invoke-RsCloudOfficeRequest.ps1 # restart your session after this
+  (So that the `.psm1` file is extracted to:
+  `%USERPROFILE\Documents\WindowsPowerShell\Modules\RackspaceCloudOffice\RackspaceCloudOffice.psm1`)
+
+Now you should be able to open PowerShell and run `Invoke-RsCloudOfficeRequest`.
 
 #### API Keys
 
@@ -46,7 +47,7 @@ generate new ones, log in to the Cloud Office Control Panel, then go to the
 For convenience, __you can save your API keys to a config file__ so that you
 don't have to pass them every time:
 
-    .\Invoke-RsCloudOfficeRequest.ps1 -SaveConfig -UserKey pugSoulpxYmQDQiY6f1j -SecretKey bI4+E0cV93qigYKuC+sRAJkqyMlc6CThXr9CDXjc
+    Set-RsCloudOfficeConfig -UserKey pugSoulpxYmQDQiY6f1j -SecretKey bI4+E0cV93qigYKuC+sRAJkqyMlc6CThXr9CDXjc
 
 (Replace the example keys with your actual keys)
 
@@ -64,7 +65,7 @@ admin you want to act on.
 ##### List All Admins
 
 ```powershell
-.\Invoke-RsCloudOfficeRequest.ps1 /v1/customers/me/admins -UnpaginateProperty admins |
+Invoke-RsCloudOfficeRequest /v1/customers/me/admins -UnpaginateProperty admins |
     Format-Table -AutoSize
 ```
 
@@ -72,34 +73,34 @@ admin you want to act on.
 
 ```powershell
 $newAdmin = @{
-    type = 'super';
-    password = 'Password!1';
-    firstName = 'Jane';
-    lastName = 'Doe';
-    email = 'jane.doe@example.com';
-    securityQuestion = 'what is delicious';
-    securityAnswer = 'candy';
+    type = 'super'
+    password = 'Password!1'
+    firstName = 'Jane'
+    lastName = 'Doe'
+    email = 'jane.doe@example.com'
+    securityQuestion = 'what is delicious'
+    securityAnswer = 'candy'
 }
-$newAdmin | .\Invoke-RsCloudOfficeRequest.ps1 -Method Post /v1/customers/me/admins/jane.doe
+$newAdmin | Invoke-RsCloudOfficeRequest -Method Post /v1/customers/me/admins/jane.doe
 ```
 
 ##### Get Details On A Specific Admin
 
 ```powershell
-.\Invoke-RsCloudOfficeRequest.ps1 /v1/customers/me/admins/jane.doe
+Invoke-RsCloudOfficeRequest /v1/customers/me/admins/jane.doe
 ```
 
 ##### Edit An Admin
 
 ```powershell
 @{ firstName = 'New Name' } |
-    .\Invoke-RsCloudOfficeRequest.ps1 -Method Put /v1/customers/me/admins/jane.doe
+    Invoke-RsCloudOfficeRequest -Method Put /v1/customers/me/admins/jane.doe
 ```
 
 ##### Delete An Admin
 
 ```powershell
-.\Invoke-RsCloudOfficeRequest.ps1 -Method Delete /v1/customers/me/admins/jane.doe
+Invoke-RsCloudOfficeRequest -Method Delete /v1/customers/me/admins/jane.doe
 ```
 
 ----
@@ -109,7 +110,7 @@ $newAdmin | .\Invoke-RsCloudOfficeRequest.ps1 -Method Post /v1/customers/me/admi
 ##### List All Domains
 
 ```powershell
-.\Invoke-RsCloudOfficeRequest.ps1 /v1/customers/me/domains -UnpaginateProperty domains |
+Invoke-RsCloudOfficeRequest /v1/customers/me/domains -UnpaginateProperty domains |
     Format-Table -AutoSize
 ```
 
@@ -123,7 +124,7 @@ replace `jane.doe` with the name of the mailbox to act on.
 ##### List All Mailboxes
 
 ```powershell
-.\Invoke-RsCloudOfficeRequest.ps1 /v1/customers/me/domains/example.com/ex/mailboxes `
+Invoke-RsCloudOfficeRequest /v1/customers/me/domains/example.com/ex/mailboxes `
     -UnpaginateProperty mailboxes | Format-Table -AutoSize
 ```
 
@@ -131,31 +132,31 @@ replace `jane.doe` with the name of the mailbox to act on.
 
 ```powershell
 $newMailbox = @{
-    displayName = 'Jane Doe';
-    password = 'Password!1';
-    size = 10*1024;
+    displayName = 'Jane Doe'
+    password = 'Password!1'
+    size = 10*1024
 }
-$newMailbox | .\Invoke-RsCloudOfficeRequest.ps1 -Method Post `
+$newMailbox | Invoke-RsCloudOfficeRequest -Method Post `
     /v1/customers/me/domains/example.com/ex/mailboxes/jane.doe
 ```
 
 ##### Get Details Of A Specific Mailbox
 
 ```powershell
-.\Invoke-RsCloudOfficeRequest.ps1 /v1/customers/me/domains/example.com/ex/mailboxes/jane.doe
+Invoke-RsCloudOfficeRequest /v1/customers/me/domains/example.com/ex/mailboxes/jane.doe
 ```
 
 ##### Edit A Mailbox
 
 ```powershell
-@{ firstName = 'New Name' } | .\Invoke-RsCloudOfficeRequest.ps1 -Method Put `
+@{ firstName = 'New Name' } | Invoke-RsCloudOfficeRequest -Method Put `
     /v1/customers/me/domains/example.com/ex/mailboxes/jane.doe
 ```
 
 ##### Delete A Mailbox
 
 ```powershell
-.\Invoke-RsCloudOfficeRequest.ps1 -Method Delete `
+Invoke-RsCloudOfficeRequest -Method Delete `
     /v1/customers/me/domains/example.com/ex/mailboxes/jane.doe
 ```
 
@@ -169,7 +170,7 @@ replace `jane.doe` with the name of the mailbox to act on.
 ##### List All Mailboxes
 
 ```powershell
-.\Invoke-RsCloudOfficeRequest.ps1 /v1/customers/me/domains/example.com/rs/mailboxes `
+Invoke-RsCloudOfficeRequest /v1/customers/me/domains/example.com/rs/mailboxes `
     -UnpaginateProperty rsMailboxes | Format-Table -AutoSize
 ```
 
@@ -177,29 +178,30 @@ replace `jane.doe` with the name of the mailbox to act on.
 
 ```powershell
 $newMailbox = @{
-    password = 'Password!1';
-    size = 25*1024;
+    password = 'Password!1'
+    size = 25*1024
 }
-$newMailbox | .\Invoke-RsCloudOfficeRequest.ps1 -Method Post `
+$newMailbox | Invoke-RsCloudOfficeRequest -Method Post `
     /v1/customers/me/domains/example.com/rs/mailboxes/jane.doe
 ```
 
 ##### Get Details Of A Specific Mailbox
 
 ```powershell
-.\Invoke-RsCloudOfficeRequest.ps1 /v1/customers/me/domains/example.com/rs/mailboxes/jane.doe
+Invoke-RsCloudOfficeRequest /v1/customers/me/domains/example.com/rs/mailboxes/jane.doe
 ```
 
 ##### Edit A Mailbox
 
 ```powershell
-@{ firstName = 'New Name' } | .\Invoke-RsCloudOfficeRequest.ps1 -Method Put `
+@{ firstName = 'New Name' } | Invoke-RsCloudOfficeRequest -Method Put `
     /v1/customers/me/domains/example.com/rs/mailboxes/jane.doe
 ```
 
 ##### Delete A Mailbox
 
 ```powershell
-.\Invoke-RsCloudOfficeRequest.ps1 -Method Delete `
+Invoke-RsCloudOfficeRequest -Method Delete `
     /v1/customers/me/domains/example.com/rs/mailboxes/jane.doe
 ```
+
