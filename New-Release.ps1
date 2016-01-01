@@ -1,14 +1,13 @@
-﻿param(
-    [Parameter(Mandatory=$true)]
-    [string]$Version
-)
+﻿function Main {
+    $module = Test-ModuleManifest .\RackspaceCloudOffice.psd1
+    [string] $version = $module.Version
 
-function Main {
     $d = New-TemporaryDirectory
     try {
-        $moduleDir = New-Item -ItemType Directory -Path (Join-Path $d 'RackspaceCloudOffice')
-        Copy-Item .\RackspaceCloudOffice.psm1 $moduleDir
-        New-ZipFile $d ".\RackspaceCloudOffice-$Version.zip"
+        $moduleDir = New-Item -ItemType Directory -Path (Join-Path $d $module.Name)
+        Copy-Item *.psd1 $moduleDir
+        Copy-Item *.psm1 $moduleDir
+        New-ZipFile $d ".\RackspaceCloudOffice-$version.zip"
     }
     finally {
         Remove-Item -Recurse $d
