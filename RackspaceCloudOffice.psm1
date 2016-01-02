@@ -111,7 +111,7 @@ function Invoke-SingleRequest {
         [Parameter(ValueFromPipeline=$true)] $Body
     )
 
-    $userAgent = 'https://github.com/mkropat/Invoke-RsCloudOfficeRequest'
+    $userAgent = 'https://github.com/rackerlabs/Invoke-RsCloudOfficeRequest'
 
     $encodedBody = switch ($ContentType) {
         'application/json'                  { ConvertTo-Json -Depth 32 $Body }
