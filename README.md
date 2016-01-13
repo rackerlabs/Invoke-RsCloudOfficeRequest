@@ -215,3 +215,6 @@ Invoke-RsCloudOfficeRequest -Method Delete `
     /v1/customers/me/domains/example.com/rs/mailboxes/jane.doe
 ```
 
+### See Also
+
+- [RackspaceCloudOfficeApiClient](https://github.com/rackerlabs/RackspaceCloudOfficeApiClient) — a C# client library for the Cloud Office REST API
