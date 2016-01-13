@@ -217,4 +217,4 @@ Invoke-RsCloudOfficeRequest -Method Delete `
 
 ### See Also
 
-- [RackspaceCloudOfficeApiClient](https://github.com/rackerlabs/RackspaceCloudOfficeApiClient) — a C# client library for the Cloud Office REST API
+- [RackspaceCloudOfficeApiClient](https://github.com/rackerlabs/RackspaceCloudOfficeApiClient) — a .NET/C# client library for the Cloud Office REST API
