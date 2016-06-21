@@ -26,8 +26,10 @@ function Invoke-RsCloudOfficeRequest {
         [string]$BaseUrl,
         [string]$ConfgFile = "$env:LOCALAPPDATA\RsCloudOfficeApi.config",
 
+        [switch]$WrapBodyInArray,
+
         [Parameter(ValueFromPipeline=$true)]
-        [hashtable]$Body
+        $Body
     )
 
     begin {
@@ -112,6 +114,10 @@ function Invoke-SingleRequest {
     )
 
     $userAgent = 'https://github.com/rackerlabs/Invoke-RsCloudOfficeRequest'
+
+    if ($WrapBodyInArray -and $Body -ne $null) {
+        $Body = @(, $Body)
+    }
 
     $encodedBody = switch ($ContentType) {
         'application/json'                  { ConvertTo-Json -Depth 32 $Body }
