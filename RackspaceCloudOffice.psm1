@@ -115,7 +115,7 @@ function Invoke-SingleRequest {
 
     $userAgent = 'https://github.com/rackerlabs/Invoke-RsCloudOfficeRequest'
 
-    if ($WrapBodyInArray) {
+    if ($WrapBodyInArray -and $Body -ne $null) {
         $Body = @(, $Body)
     }
 
