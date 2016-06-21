@@ -26,9 +26,10 @@ function Invoke-RsCloudOfficeRequest {
         [string]$BaseUrl,
         [string]$ConfgFile = "$env:LOCALAPPDATA\RsCloudOfficeApi.config",
 
+        [switch]$WrapBodyInArray,
+
         [Parameter(ValueFromPipeline=$true)]
-        $Body,
-		[switch]$WrapBodyInArray
+        $Body
     )
 
     begin {
