@@ -184,18 +184,34 @@ function Unpaginate-Request {
     param(
         [string]$UnpaginateProperty,
         [scriptblock]$Request,
-        [int]$Size = 50,
-        [int]$Offset = 0
+        [int]$Size = 50
     )
 
-    do {
-        $page = & $Request @("offset=$Offset","size=$Size")
+    $page = & $Request "size=$Size"
+    $items = @($page | select -ExpandProperty $UnpaginateProperty -ErrorAction SilentlyContinue)
+    $offset = $items.Length
+    $items
 
-        $page | select -ExpandProperty $UnpaginateProperty -ErrorAction SilentlyContinue
+    $usesMarkerPaging = $page.Order -ne $null
+    if ($usesMarkerPaging) {
+        while ($offset -lt $page.Total) {
+            $marker = Select-FirstValue $items[-1].Value $items[-1].CommonName $items[-1]
+            $page = & $Request @("marker=$marker", "size=$Size")
 
-        $Offset = $page.offset + $Size
+            $items = @($page | select -ExpandProperty $UnpaginateProperty)
+            $offset += $items.Length
+            $items
+        }
     }
-    while ($Offset -lt $page.total)
+    else { # offset paging
+        while ($offset -lt $page.Total) {
+            $page = & $Request @("offset=$Offset","size=$Size")
+
+            $page | select -ExpandProperty $UnpaginateProperty -ErrorAction SilentlyContinue
+
+            $offset = $page.Offset + $Size
+        }
+    }
 }
 
 function Join-PathWithQueryString {
