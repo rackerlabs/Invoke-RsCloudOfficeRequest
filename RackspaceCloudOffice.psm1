@@ -129,6 +129,7 @@ function Invoke-SingleRequest {
             -ContentType $ContentType `
             -Body $encodedBody `
             -UserAgent $userAgent `
+            -UseBasicParsing `
             -Headers @{
                 'Accept' = 'application/json';
                 'X-Api-Signature' = (Compute-ApiSignature $userAgent $UserKey $SecretKey);
