@@ -8,10 +8,16 @@
         Copy-Item *.psd1 $moduleDir
         Copy-Item *.psm1 $moduleDir
         New-ZipFile $d ".\RackspaceCloudOffice-$version.zip"
+        Write-Host "Zip file created: RackspaceCloudOffice-$version.zip"
+        Write-Host
     }
     finally {
         Remove-Item -Recurse $d
     }
+
+    Write-Host 'Run the following command to publish the package to the Gallery:'
+    Write-Host
+    Write-Host -ForegroundColor Yellow -BackgroundColor Black 'Publish-Module -Name RackspaceCloudOffice -NuGetApiKey YOUR_KEY'
 }
 
 function New-TemporaryDirectory {
