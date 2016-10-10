@@ -40,7 +40,7 @@ __Note:__ [PowerShell 5+](https://www.microsoft.com/en-us/download/details.aspx?
 1. Extract the `.zip` file to `%USERPROFILE%\Documents\WindowsPowerShell\Modules`
 
   (So that the `.psm1` file is extracted to:
-  `%USERPROFILE\Documents\WindowsPowerShell\Modules\RackspaceCloudOffice\RackspaceCloudOffice.psm1`)
+  `%USERPROFILE%\Documents\WindowsPowerShell\Modules\RackspaceCloudOffice\RackspaceCloudOffice.psm1`)
 
 Now you should be able to open PowerShell and run `Invoke-RsCloudOfficeRequest`.
 
@@ -62,7 +62,7 @@ don't have to pass them every time:
 (Replace the example keys with your actual keys)
 
 When you are finished interacting with the API, you may optionally delete the
-config file at `%LOCALAPPDATA\RsCloudOfficeApi.config` so that your keys aren't
+config file at `%LOCALAPPDATA%\RsCloudOfficeApi.config` so that your keys aren't
 left on the computer.
 
 ### Example Usage
